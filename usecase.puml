@@ -1,0 +1,26 @@
+@startuml usecase
+left to right direction
+skinparam actorStyle awesome
+actor "Пользователь" as user
+usecase "Открыть файл формата 3DS" as open
+usecase "Изменять 3D модель" as edit_model
+usecase "Изменять сцену" as edit_scene
+usecase "Управлять камерами" as scene_camera
+usecase "Управлять источниками света" as scene_light
+usecase "Просматривать 3D модели и сцены" as view
+usecase "Рендер сцены" as render
+usecase "Сохранять результат рендера" as render_save
+usecase "Сохранить файл формата 3DS" as save
+user --> open
+user --> edit_model
+user --> edit_scene
+user --> render
+user --> render_save
+user --> save
+open ...> view
+edit_model ...> view
+edit_scene ...> scene_camera
+edit_scene ...> scene_light
+scene_camera ...> view
+scene_light ...> view
+@enduml
