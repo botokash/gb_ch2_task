@@ -7,20 +7,20 @@ usecase "Изменять 3D модель" as edit_model
 usecase "Изменять сцену" as edit_scene
 usecase "Управлять камерами" as scene_camera
 usecase "Управлять источниками света" as scene_light
-usecase "Просматривать 3D модели и сцены" as view
+usecase "Просматривать сцену" as view
 usecase "Рендер сцены" as render
 usecase "Сохранять результат рендера" as render_save
 usecase "Сохранить файл формата 3DS" as save
 user --> open
-user --> edit_model
 user --> edit_scene
 user --> render
 user --> render_save
 user --> save
-open ...> view
-edit_model ...> view
-edit_scene ...> scene_camera
-edit_scene ...> scene_light
-scene_camera ...> view
-scene_light ...> view
+open ...> view : include
+edit_model ...> view : include
+edit_scene ...> edit_model : include
+edit_scene ...> scene_camera : include
+edit_scene ...> scene_light : include
+scene_camera ...> view : include
+scene_light ...> view : include
 @enduml
