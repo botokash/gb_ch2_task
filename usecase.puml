@@ -1,6 +1,5 @@
 @startuml usecase
 left to right direction
-skinparam actorStyle awesome
 actor "Пользователь" as user
 usecase "Открыть файл\nформата 3DS" as open
 usecase "Изменять 3D модель" as edit_model
