@@ -2,15 +2,15 @@
 left to right direction
 skinparam actorStyle awesome
 actor "Пользователь" as user
-usecase "Открыть файл формата 3DS" as open
+usecase "Открыть файл\nформата 3DS" as open
 usecase "Изменять 3D модель" as edit_model
 usecase "Изменять сцену" as edit_scene
 usecase "Управлять камерами" as scene_camera
-usecase "Управлять источниками света" as scene_light
+usecase "Управлять\nисточниками света" as scene_light
 usecase "Просматривать сцену" as view
 usecase "Рендер сцены" as render
-usecase "Сохранять результат рендера" as render_save
-usecase "Сохранить файл формата 3DS" as save
+usecase "Сохранять результат\nрендера" as render_save
+usecase "Сохранить файл\nформата 3DS" as save
 user --> open
 user --> edit_scene
 user --> render
