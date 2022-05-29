@@ -1,0 +1,48 @@
+@startuml
+
+'''left to right direction
+
+component [Импорт\nфайла 3DS] as import_3ds
+component [Экспорт\nфайла 3DS] as export_3ds
+component [Экспорт\nфайла BMP] as export_bmp
+
+component [3D модель] as model
+interface "Управление" as model_design
+model_design -- model
+
+component [Рендер\nмоделей] as model_render
+
+component [Камера] as camera
+interface "Управление" as camera_design
+camera_design -- camera
+
+component [Освещение] as light
+interface "Управление" as light_design
+light_design -- light
+
+component [Сцена] as scene
+
+component [Рабочее\nместо] as workspace
+
+component [Фотореалистичный\nрендер] as foto_render
+
+import_3ds --> model_design
+import_3ds --> camera_design
+import_3ds --> light_design
+
+model --> model_render
+camera --> model_render
+light --> model_render
+
+model_render --> scene
+
+scene --> export_3ds
+scene --> foto_render
+foto_render --> export_bmp
+
+workspace --> model_design
+workspace --> camera_design
+workspace --> light_design
+
+
+@enduml
