@@ -1,0 +1,39 @@
+@startuml 3d_model
+title Компонент "3D Модель"
+
+struct Point {
+  {field} x : float
+  {field} y : float
+  {field} z : float
+}
+
+abstract Polygon {
+  {field} parent : Polygon
+  {field} vertex1 : Point
+  {field} vertex2 : Point
+  {field} vertex3 : Point
+  {method} move()
+}
+
+abstract Face {
+  {field} parent : Polygon
+  {field} vertex1 : Point
+  {field} vertex2 : Point
+  {field} vertex3 : Point
+  {method} move()
+  {method} multiply()
+}
+
+class PolygonMesh {
+  {field} children : Polygon[]
+  {method} add(p: Polygon)
+  {method} remove(p: Polygon)
+  {method} get_childrens() Polygon[]
+  {method} move()
+}
+
+Point <-- Polygon : Использует
+Polygon <|-- (Face, PolygonMesh)
+Polygon --o PolygonMesh : Агрегирует
+
+@enduml
