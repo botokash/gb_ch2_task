@@ -1,0 +1,112 @@
+@startuml credit-gateway
+
+left to right direction
+
+package "Credit-Gateway" {
+
+    component [front] as front
+
+    component [core-api] as core_api
+    interface "http" as core_api_http
+    core_api_http -- core_api
+
+    component [process-init] as process_init
+    interface "amqp" as process_init_amqp
+    process_init_amqp -- process_init
+
+    component [process-complete] as process_complete
+    interface "amqp" as process_complete_amqp
+    process_complete_amqp -- process_complete
+
+    component [process-canceled] as process_canceled
+    interface "amqp" as process_canceled_amqp
+    process_canceled_amqp -- process_canceled
+
+    component [process-abort] as process_abort
+    interface "amqp" as process_abort_amqp
+    process_abort_amqp -- process_abort
+
+    component [process-checkout] as process_checkout
+    interface "amqp" as process_checkout_amqp
+    process_checkout_amqp -- process_checkout
+
+    component [update-cart] as update_cart
+    interface "amqp" as update_cart_amqp
+    update_cart_amqp -- update_cart
+
+    component [callbacks] as callbacks
+    interface "amqp" as callbacks_amqp
+    callbacks_amqp -- callbacks
+
+    component [telegram] as telegram
+    interface "amqp" as telegram_amqp
+    telegram_amqp -- telegram
+
+    component [member1-api] as member1_api
+    interface "http" as member1_api_http
+    member1_api_http - member1_api
+
+    front -> core_api_http : перепривязка\nкорзины
+    member1_api --> core_api_http : получить корзину\nвернуть решение
+
+    core_api --> process_init_amqp : запустить\nпроцесс
+    core_api --> process_complete_amqp : завершить\nпроцесс
+    core_api --> process_canceled_amqp : отменить\nпроцесс
+    core_api --> process_abort_amqp : прервать\nпроцесс
+    core_api --> telegram_amqp : уведомление
+
+    process_complete --> callbacks_amqp : состояние
+    process_canceled --> callbacks_amqp : состояние
+    process_checkout --> callbacks_amqp : состояние
+
+    database "mysql" {
+        component db {
+            component [carts] as table_carts
+            component [processes] as table_processes
+            component [solutions] as table_solutions
+            component [checkouts] as table_checkouts
+        }
+    }
+
+    front ..> db : чтение
+    core_api ..> db : чтение
+
+    update_cart --> table_carts: создать
+    process_init --> table_processes : создать
+    process_complete --> table_processes : статус
+    process_complete --> table_solutions : создать
+    process_canceled --> table_processes : статус
+    process_abort --> table_processes : статус
+    process_checkout --> table_checkouts : создать
+    process_checkout --> table_processes : статус
+
+}
+
+cloud {
+    component [member1-system] as member1_system
+    interface "http" as member1_system_http
+    member1_system_http -- member1_system
+}
+
+component [Магазин 1C] as store_1c
+
+component [База ИМ 1C] as im_1c
+interface "amqp" as im_1c_amqp
+im_1c_amqp - im_1c
+
+component [telegram\nсотрудника] as telegram_bot
+
+member1_system --> member1_api_http : получить корзину\nвернуть решение
+
+store_1c --> update_cart_amqp : корзина
+store_1c --> process_checkout_amqp : чек
+store_1c -right-> core_api_http : получить решение\nпрервать процесс
+
+im_1c --> update_cart_amqp : корзина
+
+telegram --> telegram_bot : уведомить\nпродавца
+
+callbacks --> member1_system_http : статус
+callbacks --> im_1c_amqp : статус
+
+@enduml
