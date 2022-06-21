@@ -1,0 +1,71 @@
+@startuml sequence
+actor Пользователь as User
+participant "Рабочее\nместо" as Workspace
+participant "Импортер 3DS" as Importer3DS
+participant "Экспортер 3DS" as Exporter3DS
+participant "Файловая\nсистема" as Filesystem
+participant "Сцена" as Scene
+participant "3D модель" as 3DModel
+participant "Камера" as Camera
+participant "Освещение" as Light
+participant "Рендер\nмоделей" as ModelRender
+
+group Начало работы [Начало работы]
+    User -> Workspace: Открыть файл
+    Workspace -> Importer3DS: Загрузить данные 3DS
+    Importer3DS -> Filesystem: Получить файл
+    Filesystem --> Importer3DS: Данные
+    Importer3DS -> Importer3DS: Обработка данных
+    Importer3DS -> Scene: Создание сцены
+    Scene -> 3DModel: Создание моделей
+    3DModel --> Scene: Обновленые данные сцены
+    Scene -> Camera: Создание камер
+    Camera --> Scene: Обновленые данные сцены
+    Scene -> Light: Создание освещения
+    Light --> Scene: Обновленые данные сцены
+    Scene -> ModelRender: Рендеринг сцены
+    ModelRender --> Scene: Рендер сцены
+    Scene --> Importer3DS: Рендер сцены
+    Importer3DS --> Workspace: Рендер сцены
+end
+
+group Изменение 3D модели [Изменение 3D модели]
+    User -> Workspace: Манипуляции с моделью
+    Workspace -> 3DModel: Формирование новой модели
+    3DModel --> Workspace: Обновленые данные сцены
+    Workspace -> Scene: Обновленые данные сцены
+    Scene -> ModelRender: Рендеринг сцены
+    ModelRender --> Scene: Рендер сцены
+    Scene --> Workspace: Рендер сцены    
+end
+
+group Изменение камеры [Изменение камеры]
+    User -> Workspace: Манипуляции с камерой
+    Workspace -> Camera: Формирование камеры
+    Camera --> Workspace: Обновленые данные сцены
+    Workspace -> Scene: Обновленые данные сцены
+    Scene -> ModelRender: Рендеринг сцены
+    ModelRender --> Scene: Рендер сцены
+    Scene --> Workspace: Рендер сцены    
+end
+
+group Изменение освещения [Изменение освещения]
+    User -> Workspace: Манипуляции с освещением
+    Workspace -> Light: Формирование освещения
+    Light --> Workspace: Обновленые данные сцены
+    Workspace -> Scene: Обновленые данные сцены
+    Scene -> ModelRender: Рендеринг сцены
+    ModelRender --> Scene: Рендер сцены
+    Scene --> Workspace: Рендер сцены    
+end
+
+group Сохранение результата работы [Сохранение результата работы]
+    User -> Workspace: Выбрать файл
+    Workspace -> Exporter3DS: Сформировать данные 3DS
+    Exporter3DS -> Scene: Запросить все данные о сцене
+    Scene --> Exporter3DS: Данные сцены
+    Exporter3DS -> Exporter3DS: Обработка данных
+    Exporter3DS -> Filesystem: Сохранить данные
+end
+
+@enduml
